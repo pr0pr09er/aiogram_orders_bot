@@ -14,6 +14,7 @@ from aiogram.types import ReplyKeyboardRemove, document
 
 from database import SecondOrderData
 from keyboards.simple_keyboard import make_row_keyboard
+from utils.send_order_to_admin import send_order_to_admin
 
 router = Router()
 
@@ -233,8 +234,8 @@ async def edit_data(field: str, new_data: str, state: FSMContext):
 @router.message(SecondOptionGroup.waiting_for_confirm_form)
 async def form_confirmed(message: Message, state: FSMContext, bot: Bot):
     data = await state.get_data()
-    if 'field' in state_data:
-        state_data.pop('field')
+    if 'field' in data:
+        data.pop('field')
     if message.text.lower() == 'верно':
         common_args = {
             'order_type': data['order_type'],
@@ -267,6 +268,10 @@ async def form_confirmed(message: Message, state: FSMContext, bot: Bot):
             session.add(session_data)
 
         await message.answer("Ваши данные сохранены. Спасибо за заявку!", reply_markup=ReplyKeyboardRemove())
+        await send_order_to_admin(admin_id=6746189705,
+                                  bot=bot,
+                                  order_type='Оформление доступа к FaceID',
+                                  order=data)
     elif message.text.lower() == 'изменить данные':
         await message.answer('Выберите пункт, который хотите изменить',
                              reply_markup=make_row_keyboard([

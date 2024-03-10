@@ -3,7 +3,7 @@ import re
 from utils.database_utills import session_scope
 from utils.errors import repeat_email, repeat_phone_number
 
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 from aiogram.types import Message
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
@@ -12,6 +12,9 @@ from aiogram.filters.state import State, StatesGroup, StateFilter
 from aiogram.types import ReplyKeyboardRemove
 from keyboards.simple_keyboard import make_row_keyboard
 from database import FirstOrderData
+from utils.send_order_to_admin import send_order_to_admin
+
+from main import admin_id
 
 router = Router()
 
@@ -185,7 +188,7 @@ async def edit_data(field: str, new_data: str, state: FSMContext):
 
 
 @router.message(FirstOptionGroup.waiting_for_confirm_form)
-async def form_confirmed(message: Message, state: FSMContext):
+async def form_confirmed(message: Message, state: FSMContext, bot: Bot):
     if message.text.lower() == 'верно':
         data = await state.get_data()
         if 'field' in data:
@@ -196,6 +199,10 @@ async def form_confirmed(message: Message, state: FSMContext):
             session.add(user_data)
             await state.clear()
         await message.answer("Ваши данные сохранены. Спасибо за заявку!", reply_markup=ReplyKeyboardRemove())
+        await send_order_to_admin(admin_id=6746189705,
+                                  bot=bot,
+                                  order_type='Оформление доступа к Outlook и т.д.',
+                                  order=data)
     elif message.text.lower() == 'изменить данные':
         await message.answer('Выберите пункт, который хотите изменить',
                              reply_markup=make_row_keyboard([

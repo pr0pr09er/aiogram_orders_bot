@@ -13,6 +13,7 @@ from aiogram.types import ReplyKeyboardRemove
 
 from database import ThirdOrderData
 from keyboards.simple_keyboard import make_row_keyboard
+from utils.send_order_to_admin import send_order_to_admin
 
 router = Router()
 
@@ -223,6 +224,10 @@ async def form_confirmed(message: Message, state: FSMContext, bot: Bot):
             await state.clear()
 
         await message.answer("Ваши данные сохранены. Спасибо за заявку!", reply_markup=ReplyKeyboardRemove())
+        await send_order_to_admin(admin_id=6746189705,
+                                  bot=bot,
+                                  order_type='Доступ к программному обеспечению',
+                                  order=state_data)
     elif message.text.lower() == 'изменить данные':
         await message.answer('Выберите пункт, который хотите изменить',
                              reply_markup=make_row_keyboard([

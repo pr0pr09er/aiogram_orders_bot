@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from handlers import common, first_option, second_option, third_option, authorize
 
-admin_ids = [855836749]
+admin_id = 855836749
 
 
 async def main():

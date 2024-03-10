@@ -12,7 +12,6 @@ from aiogram.filters import Command
 from sqlalchemy import Connection, CursorResult
 
 from keyboards.simple_keyboard import make_row_keyboard
-from main import admin_ids
 from database import FirstOrderData, SecondOrderData, ThirdOrderData, engine, Base
 import sqlalchemy as sa
 
@@ -22,7 +21,7 @@ router = Router()
 @router.message(StateFilter(None), Command('admin'))
 async def authorisation(message: Message):
     user_id = message.from_user.id
-    if user_id not in admin_ids:
+    if user_id != 855836749:
         await message.answer('Добрый день, у вас нет доступа к этой функции',
                              reply_markup=make_row_keyboard(['Вернуться обратно']).as_markup(resize_keyboard=True))
     else:
