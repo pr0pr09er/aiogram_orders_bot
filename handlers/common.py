@@ -1,7 +1,9 @@
 from aiogram import F, Router
-from aiogram.filters import Command, StateFilter
+from aiogram.exceptions import TelegramNetworkError
+from aiogram.filters import Command, StateFilter, ExceptionTypeFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.handlers import ErrorHandler
+from aiogram.types import Message, ReplyKeyboardRemove, ErrorEvent
 from keyboards.simple_keyboard import make_row_keyboard
 
 router = Router()
@@ -50,3 +52,8 @@ async def cmd_cancel(message: Message, state: FSMContext):
         reply_markup=ReplyKeyboardRemove()
     )
     await cmd_start(message, state)
+
+
+@router.error(ExceptionTypeFilter(TelegramNetworkError), F.update.message.as_("message"))
+async def handle_network_error(event: ErrorEvent, message: Message):
+    await message.answer('Произошла ошибка сети, пожалуйста отправьте свое сообщение снова!')

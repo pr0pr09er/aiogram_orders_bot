@@ -202,7 +202,7 @@ async def form_confirmed(message: Message, state: FSMContext, bot: Bot):
         await send_order_to_admin(admin_id=6746189705,
                                   bot=bot,
                                   order_type='Оформление доступа к Outlook и т.д.',
-                                  order=data)
+                                  database=FirstOrderData)
     elif message.text.lower() == 'изменить данные':
         await message.answer('Выберите пункт, который хотите изменить',
                              reply_markup=make_row_keyboard([

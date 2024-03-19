@@ -17,11 +17,13 @@ import sqlalchemy as sa
 
 router = Router()
 
+admin_id = 855836749
+
 
 @router.message(StateFilter(None), Command('admin'))
 async def authorisation(message: Message):
     user_id = message.from_user.id
-    if user_id != 855836749:
+    if user_id != admin_id:
         await message.answer('Добрый день, у вас нет доступа к этой функции',
                              reply_markup=make_row_keyboard(['Вернуться обратно']).as_markup(resize_keyboard=True))
     else:
@@ -38,8 +40,9 @@ async def authorisation(message: Message):
         ]).as_markup(resize_keyboard=True))
 
 
-def connect_to_database(table: Base, conn: Connection) -> CursorResult[Any]:
+def connect_to_database(table: Base) -> CursorResult[Any]:
     query = sa.select(table)
+    conn = engine.connect()
     result = conn.execute(query)
     return result
 
@@ -74,21 +77,21 @@ async def make_orders(result: CursorResult, message: Message, conn: Connection) 
         conn.close()
 
 
-@router.message(Command('first_orders'), lambda message: message.from_user.id in admin_ids)
+@router.message(Command('first_orders'), lambda message: message.from_user.id == admin_id)
 async def get_first_orders(message: Message):
     connection = engine.connect()
-    result = connect_to_database(FirstOrderData, connection)
+    result = connect_to_database(FirstOrderData)
     await make_orders(result, message, connection)
 
 
-@router.message(Command('second_orders'), lambda message: message.from_user.id in admin_ids)
+@router.message(Command('second_orders'), lambda message: message.from_user.id == admin_id)
 async def get_second_orders(message: Message):
     connection = engine.connect()
-    result = connect_to_database(SecondOrderData, connection)
+    result = connect_to_database(SecondOrderData)
     await make_orders(result, message, connection)
 
 
-@router.message(Command('third_orders'), lambda message: message.from_user.id in admin_ids)
+@router.message(Command('third_orders'), lambda message: message.from_user.id == admin_id)
 async def get_third_orders(message: Message):
     connection = engine.connect()
     result = connect_to_database(ThirdOrderData, connection)
