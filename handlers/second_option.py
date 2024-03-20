@@ -268,10 +268,11 @@ async def form_confirmed(message: Message, state: FSMContext, bot: Bot):
             session.add(session_data)
 
         await message.answer("Ваши данные сохранены. Спасибо за заявку!", reply_markup=ReplyKeyboardRemove())
-        await send_order_to_admin(admin_id=6746189705,
+        await send_order_to_admin(admin_id=6970846180,
                                   bot=bot,
                                   order_type='Оформление доступа к FaceID',
-                                  database=SecondOrderData)
+                                  database=SecondOrderData,
+                                  order_dict=data)
     elif message.text.lower() == 'изменить данные':
         await message.answer('Выберите пункт, который хотите изменить',
                              reply_markup=make_row_keyboard([

@@ -17,7 +17,7 @@ import sqlalchemy as sa
 
 router = Router()
 
-admin_id = 855836749
+admin_id = 6970846180
 
 
 @router.message(StateFilter(None), Command('admin'))

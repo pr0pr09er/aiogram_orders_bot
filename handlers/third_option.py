@@ -200,19 +200,19 @@ async def edit_data(field: str, new_data: str, state: FSMContext):
 
 @router.message(ThirdOptionGroup.waiting_for_confirm_form)
 async def form_confirmed(message: Message, state: FSMContext, bot: Bot):
-    state_data = await state.get_data()
-    if 'field' in state_data:
-        state_data.pop('field')
+    data = await state.get_data()
+    if 'field' in data:
+        data.pop('field')
     temp_data = {
-        'order_type': state_data['order_type'],
-        'fio': state_data['fio'],
-        'email': state_data['email'],
-        'position': state_data['position'],
-        'basis': state_data['basis'],
-        'phone_number': state_data['phone_number'],
-        'project_supervisor_fio': state_data['project_supervisor_fio']
+        'order_type': data['order_type'],
+        'fio': data['fio'],
+        'email': data['email'],
+        'position': data['position'],
+        'basis': data['basis'],
+        'phone_number': data['phone_number'],
+        'project_supervisor_fio': data['project_supervisor_fio']
     }
-    document_id = state_data['document']
+    document_id = data['document']
     file_temp = await bot.get_file(document_id)
     downloaded_file = await bot.download_file(file_temp.file_path)
     temp_data['document'] = downloaded_file
@@ -224,10 +224,11 @@ async def form_confirmed(message: Message, state: FSMContext, bot: Bot):
             await state.clear()
 
         await message.answer("Ваши данные сохранены. Спасибо за заявку!", reply_markup=ReplyKeyboardRemove())
-        await send_order_to_admin(admin_id=6746189705,
+        await send_order_to_admin(admin_id=6970846180,
                                   bot=bot,
                                   order_type='Доступ к программному обеспечению',
-                                  database=ThirdOrderData)
+                                  database=ThirdOrderData,
+                                  order_dict=data)
     elif message.text.lower() == 'изменить данные':
         await message.answer('Выберите пункт, который хотите изменить',
                              reply_markup=make_row_keyboard([
